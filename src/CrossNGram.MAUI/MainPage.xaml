@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="CrossNGram.MAUI.MainPage"
+             Title="CrossNGram (MVP)">
+  <ScrollView>
+    <VerticalStackLayout Padding="16" Spacing="8">
+      <Label Text="&#x8F93;&#x5165;&#x6587;&#x672C;" FontAttributes="Bold" />
+      <Editor Text="{Binding InputText}" Placeholder="&#x5728;&#x6B64;&#x8F93;&#x5165;&#x6587;&#x672C;&#x2026;" AutoSize="TextChanges" HeightRequest="160" />
+
+      <Grid ColumnDefinitions="Auto,*,Auto,*,Auto">
+        <Label Grid.Column="0" Text="n:" VerticalTextAlignment="Center" />
+        <Entry Grid.Column="1" Text="{Binding N}" Keyboard="Numeric" WidthRequest="80" />
+        <Label Grid.Column="2" Text="threshold:" VerticalTextAlignment="Center" />
+        <Entry Grid.Column="3" Text="{Binding Threshold}" Keyboard="Numeric" WidthRequest="80" />
+        <Button Grid.Column="4" Text="&#x5206;&#x8BCD;" Command="{Binding SegmentCommand}" IsEnabled="{Binding CanSegment}" />
+      </Grid>
+
+      <Label Text="{Binding ErrorMessage}" TextColor="Red" FontSize="12" IsVisible="{Binding HasError}" />
+
+      <Label Text="&#x7ED3;&#x679C;" FontAttributes="Bold" />
+      <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+        <Editor Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                Text="{Binding ResultText}" IsReadOnly="True"
+                AutoSize="TextChanges" HeightRequest="160" />
+        <Button Grid.Row="1" Grid.Column="1" Text="&#x590D;&#x5236;" Command="{Binding CopyCommand}" />
+      </Grid>
+    </VerticalStackLayout>
+  </ScrollView>
+</ContentPage>

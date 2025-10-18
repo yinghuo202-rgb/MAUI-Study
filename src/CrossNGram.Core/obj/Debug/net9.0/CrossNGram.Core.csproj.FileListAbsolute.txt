@@ -9,3 +9,4 @@ C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Debug\net9.0\C
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Debug\net9.0\refint\CrossNGram.Core.dll
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Debug\net9.0\CrossNGram.Core.pdb
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Debug\net9.0\ref\CrossNGram.Core.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Debug\net9.0\CrossNGram.Core.sourcelink.json
