@@ -16,3 +16,4 @@ C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.CLI\obj\Debug\net9.0\re
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.CLI\obj\Debug\net9.0\CrossNGram.CLI.pdb
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.CLI\obj\Debug\net9.0\CrossNGram.CLI.genruntimeconfig.cache
 C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.CLI\obj\Debug\net9.0\ref\CrossNGram.CLI.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.CLI\obj\Debug\net9.0\CrossNGram.CLI.sourcelink.json

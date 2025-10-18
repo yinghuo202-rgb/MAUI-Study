@@ -1,50 +1,60 @@
-# CrossNGram Segmenter (CNSeg)
+# CrossNGram Segmenter
 
-最小可运行版（MVP）按照《跨平台 n-gram 分词工具 — CNSeg SRS v1.0》完成项目结构梳理，新增 CLI、核心库与测试工程，便于后续扩展到 .NET MAUI 图形界面。
+CrossNGram is a minimal n-gram based tokenizer that ships with:
 
-## 解决方案结构
+- `CrossNGram.Core`: core text utilities and tokenization logic
+- `CrossNGram.CLI`: command line interface with UTF-8 input/output
+- `CrossNGram.MAUI`: WinUI 3 front-end with basic validation
+- `CrossNGram.Tests`: xUnit coverage for normalization, tokenization, and UTF-8 IO
 
-```
-CrossNGram.sln
-├─ data/
-│  └─ sample.txt
-├─ src/
-│  ├─ CrossNGram.CLI/        # CLI 入口与参数解析
-│  └─ CrossNGram.Core/       # n-gram 模型与分词逻辑
-└─ tests/
-   └─ CrossNGram.Tests/      # 核心逻辑单元测试
-```
+## Build and Test
 
-现有 MAUI 演示项目仍保留在 `MAUIApp/`，后续 GUI 版本可复用 `CrossNGram.Core`。
-
-## 快速开始
-
-```bash
-dotnet build CrossNGram.sln
-dotnet run --project src/CrossNGram.CLI -- --input data/sample.txt --n 2 --threshold 1
+```powershell
+dotnet build .\CrossNGram.sln -c Debug
+dotnet test  .\CrossNGram.sln
 ```
 
-如未提供 `--input` 与 `--output` 参数，则默认从标准输入读取、向标准输出写入。
+## CLI Usage
 
-## 发布单文件 CLI（win-x64）
+```powershell
+# stdin to stdout (UTF-8)
+echo "我爱自然语言处理" | dotnet run --project .\src\CrossNGram.CLI -- --n 2 --threshold 1
 
-```bash
-dotnet publish src/CrossNGram.CLI/CrossNGram.CLI.csproj `
+# file input/output (target directory is created when necessary)
+dotnet run --project .\src\CrossNGram.CLI -- `
+  --input .\data\sample.txt `
+  --output .\data\result.txt `
+  --n 3 `
+  --threshold 2
+```
+
+- `--n` accepts values in `[2, 9]`
+- `--threshold` accepts values in `[1, 99]`
+- failures print to `stderr` and exit with a non-zero code
+
+## MAUI (WinUI 3) App
+
+```powershell
+dotnet run --project .\src\CrossNGram.MAUI\CrossNGram.MAUI.csproj `
+  -c Debug `
+  -f net9.0-windows10.0.19041.0
+```
+
+- requires Windows App SDK Runtime 1.6 or newer
+- parameters constrained to `n ∈ [2,5]`, `threshold ∈ [1,9]`
+- input larger than 32KB (UTF-8) disables the tokenize button and prompts the user to switch to the CLI
+
+## CLI Single-File Publish (win-x64)
+
+```powershell
+dotnet publish .\src\CrossNGram.CLI\CrossNGram.CLI.csproj `
   -c Release `
   -r win-x64 `
+  -p:SelfContained=true `
   -p:PublishSingleFile=true `
-  -p:SelfContained=true
+  -p:PublishReadyToRun=true `
+  -p:EnableCompressionInSingleFile=true `
+  -p:IncludeNativeLibrariesForSelfExtract=true
 ```
 
-构建完成后，最终发布物位于 `src/CrossNGram.CLI/bin/Release/net9.0/win-x64/publish/CrossNGram.CLI.exe`。
-
-## 运行测试
-
-```bash
-dotnet test CrossNGram.sln
-```
-
-## 后续规划
-
-- v1.1：引入配置文件（JSON/YAML），保持 CLI/核心分层。
-- v2.0：创建 .NET MAUI GUI 项目，直接复用核心库与 CLI 配置解析思路。
+The executable is produced at `src/CrossNGram.CLI/bin/Release/net9.0/win-x64/publish/CrossNGram.CLI.exe`.

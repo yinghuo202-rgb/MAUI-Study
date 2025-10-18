@@ -1,126 +1,206 @@
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Input;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.ApplicationModel.DataTransfer;
 using CrossNGram.MAUI.Services;
+using Microsoft.Maui.ApplicationModel.DataTransfer;
+using Microsoft.Maui.Controls;
 
 namespace CrossNGram.MAUI.ViewModels;
 
 public abstract class BindableBase : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
-    protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? name=null)
+
+    protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
     {
-        if (Equals(storage, value)) return false;
+        if (EqualityComparer<T>.Default.Equals(storage, value))
+        {
+            return false;
+        }
+
         storage = value;
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         return true;
     }
-    protected void Raise([CallerMemberName] string? name=null) =>
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
+
+    protected void Raise([CallerMemberName] string? propertyName = null) =>
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 }
 
 public sealed class MainViewModel : BindableBase
 {
+    private const int MaxInputBytes = 32 * 1024;
+    private const int MinN = 2;
+    private const int MaxN = 5;
+    private const int MinThreshold = 1;
+    private const int MaxThreshold = 9;
+
     private string _inputText = string.Empty;
     private string _resultText = string.Empty;
-    private int _n = 2;
-    private int _threshold = 1;
-    private string _error = string.Empty;
-    private readonly ICommand _segmentCommand;
-    private readonly ICommand _copyCommand;
+    private int _n = MinN;
+    private int _threshold = MinThreshold;
+    private string _errorMessage = string.Empty;
+    private bool _canSegment;
+
+    private readonly Command _segmentCommand;
+    private readonly Command _copyCommand;
 
     public MainViewModel()
     {
-        _segmentCommand = new Command(Segment);
-        _copyCommand = new Command(CopyResult);
+        _segmentCommand = new Command(Segment, () => CanSegment);
+        _copyCommand = new Command(CopyResult, () => HasResult);
         UpdateCanSegment();
     }
 
     public string InputText
     {
         get => _inputText;
-        set { if (SetProperty(ref _inputText, value)) UpdateCanSegment(); }
+        set
+        {
+            if (SetProperty(ref _inputText, value))
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    ResultText = string.Empty;
+                }
+
+                UpdateCanSegment();
+            }
+        }
     }
 
     public string ResultText
     {
         get => _resultText;
-        private set => SetProperty(ref _resultText, value);
+        private set
+        {
+            if (SetProperty(ref _resultText, value))
+            {
+                Raise(nameof(HasResult));
+                _copyCommand.ChangeCanExecute();
+            }
+        }
     }
+
+    public bool HasResult => !string.IsNullOrWhiteSpace(ResultText);
 
     public int N
     {
         get => _n;
-        set { if (SetProperty(ref _n, value)) UpdateCanSegment(); }
+        set
+        {
+            if (SetProperty(ref _n, value))
+            {
+                UpdateCanSegment();
+            }
+        }
     }
 
     public int Threshold
     {
         get => _threshold;
-        set { if (SetProperty(ref _threshold, value)) UpdateCanSegment(); }
+        set
+        {
+            if (SetProperty(ref _threshold, value))
+            {
+                UpdateCanSegment();
+            }
+        }
     }
 
     public string ErrorMessage
     {
-        get => _error;
-        private set { if (SetProperty(ref _error, value)) Raise(nameof(HasError)); }
+        get => _errorMessage;
+        private set
+        {
+            if (SetProperty(ref _errorMessage, value))
+            {
+                Raise(nameof(HasError));
+            }
+        }
     }
+
     public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
-    private bool _canSegment;
     public bool CanSegment
     {
         get => _canSegment;
-        private set { SetProperty(ref _canSegment, value); }
+        private set
+        {
+            if (SetProperty(ref _canSegment, value))
+            {
+                _segmentCommand.ChangeCanExecute();
+            }
+        }
     }
 
     public ICommand SegmentCommand => _segmentCommand;
+
     public ICommand CopyCommand => _copyCommand;
 
     private void UpdateCanSegment()
     {
-        ErrorMessage = string.Empty;
-        var validParams = (N >= 2 && N <= 5) && (Threshold >= 1 && Threshold <= 9);
-        if (!validParams)
-            ErrorMessage = "\u53c2\u6570\u975e\u6cd5: n in [2,5], threshold in [1,9].";
-        var hasInput = !string.IsNullOrWhiteSpace(InputText);
-        var sizeOk = Encoding.UTF8.GetByteCount(InputText ?? string.Empty) <= 32768;
-        if (!sizeOk && string.IsNullOrEmpty(ErrorMessage))
-            ErrorMessage = "\u6587\u672c\u8fc7\u5927 (> 32KB), \u8bf7\u6539\u7528 CLI \u7248\u672c\u5904\u7406.";
-        CanSegment = validParams && hasInput && sizeOk;
+        var sanitized = InputText ?? string.Empty;
+        var hasInput = !string.IsNullOrWhiteSpace(sanitized);
+        var parametersValid = N is >= MinN and <= MaxN && Threshold is >= MinThreshold and <= MaxThreshold;
+        var sizeValid = Encoding.UTF8.GetByteCount(sanitized) <= MaxInputBytes;
+
+        if (!parametersValid)
+        {
+            ErrorMessage = $"n must be within [{MinN}, {MaxN}] and threshold within [{MinThreshold}, {MaxThreshold}].";
+        }
+        else if (!hasInput)
+        {
+            ErrorMessage = "Enter text before running the tokenizer.";
+        }
+        else if (!sizeValid)
+        {
+            ErrorMessage = "Input exceeds 32KB; please use the CLI for large files.";
+        }
+        else
+        {
+            ErrorMessage = string.Empty;
+        }
+
+        CanSegment = parametersValid && hasInput && sizeValid;
     }
 
     private void Segment()
     {
+        if (!CanSegment)
+        {
+            return;
+        }
+
         try
         {
-            // Guard
-            UpdateCanSegment();
-            if (!CanSegment) return;
-
             var tokens = SegFacade.Segment(InputText, N, Threshold);
             ResultText = string.Join(" ", tokens);
+            ErrorMessage = string.Empty;
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"\u5904\u7406\u5931\u8D25: {ex.Message}";
+            ErrorMessage = $"Tokenization failed: {ex.Message}";
         }
     }
 
     private async void CopyResult()
     {
+        if (!HasResult)
+        {
+            return;
+        }
+
         try
         {
-            if (!string.IsNullOrEmpty(ResultText))
-                await Clipboard.SetTextAsync(ResultText);
+            await Clipboard.SetTextAsync(ResultText);
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"\u590D\u5236\u5931\u8D25: {ex.Message}";
+            ErrorMessage = $"Copy failed: {ex.Message}";
         }
     }
 }

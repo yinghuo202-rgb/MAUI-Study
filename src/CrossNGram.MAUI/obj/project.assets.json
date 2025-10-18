@@ -783,7 +783,7 @@
         }
       }
     },
-    "net9.0-maccatalyst26.0/win10-x64": {
+    "net9.0-maccatalyst26.0/win-x64": {
       "Microsoft.Extensions.Configuration/9.0.8": {
         "type": "package",
         "dependencies": {
@@ -1645,7 +1645,7 @@
           "buildTransitive/Microsoft.Windows.SDK.BuildTools.targets": {}
         }
       },
-      "Microsoft.WindowsAppSDK/1.7.250606001": {
+      "Microsoft.WindowsAppSDK/1.7.251014001": {
         "type": "package",
         "dependencies": {
           "Microsoft.Web.WebView2": "1.0.2903.40",
@@ -2258,7 +2258,7 @@
           "buildTransitive/Microsoft.Windows.SDK.BuildTools.targets": {}
         }
       },
-      "Microsoft.WindowsAppSDK/1.7.250606001": {
+      "Microsoft.WindowsAppSDK/1.7.251014001": {
         "type": "package",
         "dependencies": {
           "Microsoft.Web.WebView2": "1.0.2903.40",
@@ -2394,7 +2394,7 @@
         }
       }
     },
-    "net9.0-windows10.0.19041/win10-x64": {
+    "net9.0-windows10.0.19041/win-x64": {
       "Microsoft.Extensions.Configuration/9.0.8": {
         "type": "package",
         "dependencies": {
@@ -2843,7 +2843,7 @@
           "buildTransitive/Microsoft.Windows.SDK.BuildTools.targets": {}
         }
       },
-      "Microsoft.WindowsAppSDK/1.7.250606001": {
+      "Microsoft.WindowsAppSDK/1.7.251014001": {
         "type": "package",
         "dependencies": {
           "Microsoft.Web.WebView2": "1.0.2903.40",
@@ -4415,10 +4415,10 @@
         "schemas/10.0.22621.0/winrt/UapManifestSchema_v8.xsd"
       ]
     },
-    "Microsoft.WindowsAppSDK/1.7.250606001": {
-      "sha512": "LdMRw0HqGu/w0DQKDRaABdIuSL8GiRitHSMiHH3SAR715/mEiWtVWPRJKp0aMcQ6JiBBqkQVZgu71MeXmQipkw==",
+    "Microsoft.WindowsAppSDK/1.7.251014001": {
+      "sha512": "ZOfTLK/0DnBxtlzanggHQohsT21gmA972gb8uqcsioDPXpnnoUBovFubjhey/46lMk0f43EZx+Pz9h1rrAfKrQ==",
       "type": "package",
-      "path": "microsoft.windowsappsdk/1.7.250606001",
+      "path": "microsoft.windowsappsdk/1.7.251014001",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -4918,7 +4918,7 @@
         "manifests/Microsoft.InteractiveExperiences.manifest",
         "manifests/Microsoft.WindowsAppSdk.Foundation.manifest",
         "manifests/manifests/Microsoft.WindowsAppSdk.WinUI.manifest",
-        "microsoft.windowsappsdk.1.7.250606001.nupkg.sha512",
+        "microsoft.windowsappsdk.1.7.251014001.nupkg.sha512",
         "microsoft.windowsappsdk.nuspec",
         "runtimes/win-arm64/native/Microsoft.Windows.ApplicationModel.Background.UniversalBGTask.dll",
         "runtimes/win-arm64/native/Microsoft.WindowsAppRuntime.Bootstrap.dll",
@@ -5004,7 +5004,8 @@
     ],
     "net9.0-windows10.0.19041": [
       "CrossNGram.Core >= 1.0.0",
-      "Microsoft.Maui.Controls >= 9.0.111"
+      "Microsoft.Maui.Controls >= 9.0.111",
+      "Microsoft.WindowsAppSDK >= 1.7.*"
     ]
   },
   "packageFolders": {
@@ -5021,6 +5022,7 @@
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "configFilePaths": [
+        "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\NuGet.Config",
         "C:\\Users\\syf\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
@@ -5104,6 +5106,10 @@
           "Microsoft.Maui.Controls": {
             "target": "Package",
             "version": "[9.0.111, )"
+          },
+          "Microsoft.WindowsAppSDK": {
+            "target": "Package",
+            "version": "[1.7.*, )"
           }
         },
         "imports": [
@@ -5119,8 +5125,20 @@
         "warn": true,
         "downloadDependencies": [
           {
+            "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+            "version": "[9.0.10, 9.0.10]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Runtime.win-x64",
+            "version": "[9.0.10, 9.0.10]"
+          },
+          {
             "name": "Microsoft.Windows.SDK.NET.Ref",
             "version": "[10.0.19041.57, 10.0.19041.57]"
+          },
+          {
+            "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+            "version": "[9.0.10, 9.0.10]"
           }
         ],
         "frameworkReferences": {
@@ -5138,7 +5156,7 @@
       "maccatalyst-x64": {
         "#import": []
       },
-      "win10-x64": {
+      "win-x64": {
         "#import": []
       }
     }

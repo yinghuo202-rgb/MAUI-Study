@@ -10,14 +10,24 @@
     <ApplicationId>com.example.crossngram</ApplicationId>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
     <EnablePreviewMsixTooling>true</EnablePreviewMsixTooling>
+    <SkipValidateMauiImplicitPackageReferences>true</SkipValidateMauiImplicitPackageReferences>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
+    <SupportedOSPlatformVersion>13.1</SupportedOSPlatformVersion>
+    <RuntimeIdentifiers>maccatalyst-x64</RuntimeIdentifiers>
   </PropertyGroup>
   <ItemGroup>
     <MauiAsset Include="Resources\**" LogicalName="Resources\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.111" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CrossNGram.Core\CrossNGram.Core.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-windows10.0.19041.0'">
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.*" />
+  </ItemGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net9.0-windows10.0.19041.0'">
+    <WindowsAppSdkSelfContained>true</WindowsAppSdkSelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+  </PropertyGroup>
 </Project>

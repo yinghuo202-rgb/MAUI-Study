@@ -1,0 +1,1 @@
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.MAUI\CrossNGram.MAUI.csproj;x64

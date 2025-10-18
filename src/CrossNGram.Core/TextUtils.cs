@@ -4,9 +4,6 @@ namespace CrossNGram.Core;
 
 public static class TextUtils
 {
-    /// <summary>
-    /// Normalizes whitespace and line endings to prepare text for tokenization.
-    /// </summary>
     public static string NormalizeInput(string? input)
     {
         if (string.IsNullOrWhiteSpace(input))
@@ -14,7 +11,7 @@ public static class TextUtils
             return string.Empty;
         }
 
-        var sb = new StringBuilder(input.Length);
+        var builder = new StringBuilder(input.Length);
         var lastWasSpace = false;
 
         foreach (var ch in input.Normalize(NormalizationForm.FormKC))
@@ -26,15 +23,16 @@ public static class TextUtils
                     continue;
                 }
 
-                sb.Append(' ');
+                builder.Append(' ');
                 lastWasSpace = true;
-                continue;
             }
-
-            sb.Append(ch);
-            lastWasSpace = false;
+            else
+            {
+                builder.Append(ch);
+                lastWasSpace = false;
+            }
         }
 
-        return sb.ToString().Trim();
+        return builder.ToString().Trim();
     }
 }

@@ -1,23 +1,20 @@
-using System.Collections.Immutable;
-using System.Text;
-
 namespace CrossNGram.Core;
 
-/// <summary>
-/// Provides n-gram based segmentation for UTF-8 text.
-/// </summary>
 public sealed class Tokenizer
 {
-    public IReadOnlyList<string> Tokenize(string text, int n = 2, int threshold = 1)
+    private const int MinN = 2;
+    private const int MinThreshold = 1;
+
+    public IReadOnlyList<string> Tokenize(string text, int n = MinN, int threshold = MinThreshold)
     {
-        if (n <= 0)
+        if (n < MinN)
         {
-            throw new ArgumentOutOfRangeException(nameof(n), "n must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(n), $"n must be at least {MinN}.");
         }
 
-        if (threshold < 0)
+        if (threshold < MinThreshold)
         {
-            throw new ArgumentOutOfRangeException(nameof(threshold), "threshold must be non-negative.");
+            throw new ArgumentOutOfRangeException(nameof(threshold), $"threshold must be at least {MinThreshold}.");
         }
 
         var normalized = TextUtils.NormalizeInput(text);
@@ -46,16 +43,24 @@ public sealed class Tokenizer
             var gram = normalized.AsSpan(gramStart, n);
             if (model.GetFrequency(gram) <= threshold)
             {
-                tokens.Add(normalized[start..boundary]);
+                AddToken(tokens, normalized[start..boundary]);
                 start = boundary;
             }
         }
 
         if (start < normalized.Length)
         {
-            tokens.Add(normalized[start..]);
+            AddToken(tokens, normalized[start..]);
         }
 
-        return tokens.ToImmutableArray();
+        return tokens.ToArray();
+    }
+
+    private static void AddToken(ICollection<string> tokens, string candidate)
+    {
+        if (!string.IsNullOrWhiteSpace(candidate))
+        {
+            tokens.Add(candidate);
+        }
     }
 }

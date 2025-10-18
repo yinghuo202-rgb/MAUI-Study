@@ -20,6 +20,7 @@
       "outputPath": "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\src\\CrossNGram.Core\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
+        "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\NuGet.Config",
         "C:\\Users\\syf\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [

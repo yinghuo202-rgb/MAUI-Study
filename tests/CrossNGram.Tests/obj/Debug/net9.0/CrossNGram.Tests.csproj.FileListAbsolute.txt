@@ -100,3 +100,4 @@ C:\Users\syf\Desktop\新建文件夹\MAUI\tests\CrossNGram.Tests\obj\Debug\net9.
 C:\Users\syf\Desktop\新建文件夹\MAUI\tests\CrossNGram.Tests\obj\Debug\net9.0\CrossNGram.Tests.pdb
 C:\Users\syf\Desktop\新建文件夹\MAUI\tests\CrossNGram.Tests\obj\Debug\net9.0\CrossNGram.Tests.genruntimeconfig.cache
 C:\Users\syf\Desktop\新建文件夹\MAUI\tests\CrossNGram.Tests\obj\Debug\net9.0\ref\CrossNGram.Tests.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\tests\CrossNGram.Tests\obj\Debug\net9.0\CrossNGram.Tests.sourcelink.json

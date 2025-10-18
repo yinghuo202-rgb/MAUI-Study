@@ -3,9 +3,6 @@ using System.Collections.Immutable;
 
 namespace CrossNGram.Core;
 
-/// <summary>
-/// Aggregates n-gram frequencies for a chunk of text.
-/// </summary>
 public sealed class NGramModel
 {
     private readonly ImmutableDictionary<string, int> _frequencies;
@@ -17,19 +14,21 @@ public sealed class NGramModel
 
     public static NGramModel FromText(string text, int n)
     {
-        if (n <= 0)
+        ArgumentNullException.ThrowIfNull(text);
+
+        if (n < 2)
         {
-            throw new ArgumentOutOfRangeException(nameof(n), "n must be greater than zero.");
+            throw new ArgumentOutOfRangeException(nameof(n), "n must be at least 2.");
         }
 
-        if (string.IsNullOrEmpty(text) || text.Length < n)
+        if (text.Length < n)
         {
             return new NGramModel(ImmutableDictionary<string, int>.Empty);
         }
 
         var map = new Dictionary<string, int>(StringComparer.Ordinal);
-
         var buffer = ArrayPool<char>.Shared.Rent(n);
+
         try
         {
             for (var i = 0; i <= text.Length - n; i++)

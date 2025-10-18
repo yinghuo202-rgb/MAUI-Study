@@ -1,18 +1,19 @@
-
 using System.Text;
 using CrossNGram.Core;
 
-// 强制使用 UTF-8（无 BOM）
-Console.InputEncoding = Encoding.UTF8;
-Console.OutputEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-
-
+var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
 Console.InputEncoding = Encoding.UTF8;
-Console.OutputEncoding = Encoding.UTF8;
+Console.OutputEncoding = utf8NoBom;
 
-var options = CliOptions.Parse(args);
+if (!CliOptions.TryParse(args, out var options, out var parseError))
+{
+    Console.Error.WriteLine($"Parameter error: {parseError}");
+    Console.Error.WriteLine("Use --help to see command examples.");
+    Environment.ExitCode = 1;
+    return;
+}
+
 if (options.ShowHelp)
 {
     PrintHelp();
@@ -30,7 +31,7 @@ try
 }
 catch (Exception ex)
 {
-    Console.Error.WriteLine($"Error: {ex.Message}");
+    Console.Error.WriteLine($"Execution failed: {ex.Message}");
     Environment.ExitCode = 1;
 }
 
@@ -38,10 +39,20 @@ static async Task<string> ReadInputAsync(CliOptions options)
 {
     if (!string.IsNullOrWhiteSpace(options.InputPath))
     {
-        return await File.ReadAllTextAsync(options.InputPath!, Encoding.UTF8);
+        if (!File.Exists(options.InputPath))
+        {
+            throw new FileNotFoundException("Input file not found.", options.InputPath);
+        }
+
+        return await File.ReadAllTextAsync(options.InputPath, Encoding.UTF8);
     }
 
-    using var reader = new StreamReader(Console.OpenStandardInput(), Encoding.UTF8);
+    using var reader = new StreamReader(
+        Console.OpenStandardInput(),
+        new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
+        detectEncodingFromByteOrderMarks: true,
+        leaveOpen: false);
+
     return await reader.ReadToEndAsync();
 }
 
@@ -49,8 +60,14 @@ static async Task WriteOutputAsync(CliOptions options, string output)
 {
     if (!string.IsNullOrWhiteSpace(options.OutputPath))
     {
+        var directory = Path.GetDirectoryName(options.OutputPath);
+        if (!string.IsNullOrEmpty(directory))
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         var utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-        await File.WriteAllTextAsync(options.OutputPath!, output, utf8NoBom);
+        await File.WriteAllTextAsync(options.OutputPath, output, utf8NoBom);
         return;
     }
 
@@ -59,20 +76,21 @@ static async Task WriteOutputAsync(CliOptions options, string output)
 
 static void PrintHelp()
 {
-    var help = """
-        CrossNGram Segmenter (CNSeg) CLI
+    const string help = """
+        CrossNGram CLI - minimal n-gram based tokenizer
 
-        Usage:
-          dotnet run --project src/CrossNGram.CLI -- [options]
+        Basic usage (stdin/stdout):
+          echo "我爱自然语言处理" | dotnet run --project src/CrossNGram.CLI -- --n 2 --threshold 1
+
+        File usage (UTF-8):
+          dotnet run --project src/CrossNGram.CLI -- --input data/sample.txt --output data/result.txt --n 3 --threshold 2
 
         Options:
-          --input <path>       Optional UTF-8 text file to read.
-          --output <path>      Optional output file for segmented result.
-          --n <value>          N-gram length (default: 2).
-          --threshold <value>  Cut-off frequency to split tokens (default: 1).
-          --help               Display this help message.
-
-        Reads from STDIN and writes to STDOUT when paths are omitted.
+          --input <path> / -i <path>       Source file (defaults to STDIN)
+          --output <path> / -o <path>      Target file (defaults to STDOUT)
+          --n <value> / -n <value>         n-gram window size, range [2, 9], default 2
+          --threshold <value> / -t <value> Frequency threshold, range [1, 99], default 1
+          --help / -h                      Print help text
         """;
 
     Console.WriteLine(help);
@@ -85,12 +103,19 @@ internal sealed record CliOptions(
     int Threshold,
     bool ShowHelp)
 {
-    public static CliOptions Parse(string[] args)
+    private const int DefaultN = 2;
+    private const int DefaultThreshold = 1;
+    private const int MinN = 2;
+    private const int MaxN = 9;
+    private const int MinThreshold = 1;
+    private const int MaxThreshold = 99;
+
+    public static bool TryParse(string[] args, out CliOptions options, out string error)
     {
         string? input = null;
         string? output = null;
-        var n = 2;
-        var threshold = 1;
+        var n = DefaultN;
+        var threshold = DefaultThreshold;
         var showHelp = false;
 
         for (var i = 0; i < args.Length; i++)
@@ -101,50 +126,100 @@ internal sealed record CliOptions(
                 case "--help":
                 case "-h":
                     showHelp = true;
-                    break;
+                    continue;
                 case "--input":
-                    input = ReadValue(args, ref i, "--input");
+                case "-i":
+                    if (!TryReadValue(args, ref i, current, out var inputValue, out error))
+                    {
+                        options = Default();
+                        return false;
+                    }
+
+                    input = inputValue;
                     break;
                 case "--output":
-                    output = ReadValue(args, ref i, "--output");
+                case "-o":
+                    if (!TryReadValue(args, ref i, current, out var outputValue, out error))
+                    {
+                        options = Default();
+                        return false;
+                    }
+
+                    output = outputValue;
                     break;
                 case "--n":
-                    n = ParseInt(ReadValue(args, ref i, "--n"), 1, nameof(n));
+                case "-n":
+                    if (!TryReadValue(args, ref i, current, out var nRaw, out error) ||
+                        !TryParseInt(nRaw, MinN, MaxN, "n", out n, out error))
+                    {
+                        options = Default();
+                        return false;
+                    }
                     break;
                 case "--threshold":
-                    threshold = ParseInt(ReadValue(args, ref i, "--threshold"), 0, nameof(threshold));
+                case "-t":
+                    if (!TryReadValue(args, ref i, current, out var thresholdRaw, out error) ||
+                        !TryParseInt(thresholdRaw, MinThreshold, MaxThreshold, "threshold", out threshold, out error))
+                    {
+                        options = Default();
+                        return false;
+                    }
                     break;
                 default:
-                    throw new ArgumentException($"Unrecognized option '{current}'. Use --help for usage.");
+                    options = Default();
+                    error = $"Unknown option: {current}";
+                    return false;
             }
         }
 
-        return new CliOptions(input, output, n, threshold, showHelp);
+        options = new CliOptions(input, output, n, threshold, showHelp);
+        error = string.Empty;
+        return true;
     }
 
-    private static string ReadValue(IReadOnlyList<string> args, ref int index, string option)
+    private static CliOptions Default() => new(null, null, DefaultN, DefaultThreshold, false);
+
+    private static bool TryReadValue(
+        IReadOnlyList<string> args,
+        ref int index,
+        string option,
+        out string value,
+        out string error)
     {
         if (index + 1 >= args.Count)
         {
-            throw new ArgumentException($"Missing value for {option}.");
+            value = string.Empty;
+            error = $"Missing value for {option}.";
+            return false;
         }
 
         index += 1;
-        return args[index];
+        value = args[index];
+        error = string.Empty;
+        return true;
     }
 
-    private static int ParseInt(string value, int minValue, string name)
+    private static bool TryParseInt(
+        string text,
+        int min,
+        int max,
+        string name,
+        out int result,
+        out string error)
     {
-        if (!int.TryParse(value, out var result))
+        if (!int.TryParse(text, out result))
         {
-            throw new ArgumentException($"Value '{value}' for {name} is not a valid integer.");
+            error = $"{name} expects an integer but received '{text}'.";
+            return false;
         }
 
-        if (result < minValue)
+        if (result < min || result > max)
         {
-            throw new ArgumentOutOfRangeException(name, $"Value must be greater than or equal to {minValue}.");
+            error = $"{name} must be within [{min}, {max}].";
+            return false;
         }
 
-        return result;
+        error = string.Empty;
+        return true;
     }
 }

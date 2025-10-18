@@ -14,6 +14,7 @@
         "outputPath": "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\src\\CrossNGram.Core\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
+          "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\NuGet.Config",
           "C:\\Users\\syf\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
@@ -75,6 +76,7 @@
         "projectStyle": "PackageReference",
         "crossTargeting": true,
         "configFilePaths": [
+          "C:\\Users\\syf\\Desktop\\新建文件夹\\MAUI\\NuGet.Config",
           "C:\\Users\\syf\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
@@ -158,6 +160,10 @@
             "Microsoft.Maui.Controls": {
               "target": "Package",
               "version": "[9.0.111, )"
+            },
+            "Microsoft.WindowsAppSDK": {
+              "target": "Package",
+              "version": "[1.7.*, )"
             }
           },
           "imports": [
@@ -173,8 +179,20 @@
           "warn": true,
           "downloadDependencies": [
             {
+              "name": "Microsoft.AspNetCore.App.Runtime.win-x64",
+              "version": "[9.0.10, 9.0.10]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Runtime.win-x64",
+              "version": "[9.0.10, 9.0.10]"
+            },
+            {
               "name": "Microsoft.Windows.SDK.NET.Ref",
               "version": "[10.0.19041.57, 10.0.19041.57]"
+            },
+            {
+              "name": "Microsoft.WindowsDesktop.App.Runtime.win-x64",
+              "version": "[9.0.10, 9.0.10]"
             }
           ],
           "frameworkReferences": {
@@ -192,7 +210,7 @@
         "maccatalyst-x64": {
           "#import": []
         },
-        "win10-x64": {
+        "win-x64": {
           "#import": []
         }
       }

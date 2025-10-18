@@ -1,0 +1,1 @@
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.MAUI\bin\Release\net9.0-windows10.0.19041.0\win-x64\AppPackages\CrossNGram.MAUI_1.0.0.0_x64_Test\CrossNGram.MAUI_1.0.0.0_x64.msix

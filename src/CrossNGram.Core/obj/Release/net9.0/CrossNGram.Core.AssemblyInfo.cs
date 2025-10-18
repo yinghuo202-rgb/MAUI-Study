@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CrossNGram.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de3f3ded1ab140cd6f970367133881c364d371e9")]
 [assembly: System.Reflection.AssemblyProductAttribute("CrossNGram.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CrossNGram.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

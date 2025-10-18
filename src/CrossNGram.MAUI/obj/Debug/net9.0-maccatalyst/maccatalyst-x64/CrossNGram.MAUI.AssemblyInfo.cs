@@ -13,12 +13,12 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CrossNGram.MAUI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+84a12b67681103e718ee62db0bdb8df674ed821b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+de3f3ded1ab140cd6f970367133881c364d371e9")]
 [assembly: System.Reflection.AssemblyProductAttribute("CrossNGram.MAUI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CrossNGram.MAUI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("MacCatalyst26.0")]
-[assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("MacCatalyst10.0.19041.0")]
+[assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("MacCatalyst13.1")]
 
 // 由 MSBuild WriteCodeFragment 类生成。
 
