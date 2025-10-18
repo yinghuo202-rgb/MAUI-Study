@@ -1,0 +1,11 @@
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\bin\Release\net9.0\CrossNGram.Core.deps.json
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\bin\Release\net9.0\CrossNGram.Core.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\bin\Release\net9.0\CrossNGram.Core.pdb
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.AssemblyInfoInputs.cache
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.AssemblyInfo.cs
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.csproj.CoreCompileInputs.cache
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\refint\CrossNGram.Core.dll
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\CrossNGram.Core.pdb
+C:\Users\syf\Desktop\新建文件夹\MAUI\src\CrossNGram.Core\obj\Release\net9.0\ref\CrossNGram.Core.dll
